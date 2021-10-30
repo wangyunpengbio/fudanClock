@@ -12,11 +12,11 @@ import io
 import numpy
 from PIL import Image
 from PIL import ImageEnhance
+import requests
 
 from requests import session, post, adapters
 
 adapters.DEFAULT_RETRIES = 5
-
 
 class Fudan:
     """
@@ -154,7 +154,7 @@ class Fudan:
 class Zlapp(Fudan):
     last_info = ''
 
-    def check(self, if_last_check = False):
+    def check(self, if_notify_hand_submit = False):
         """
         检查
         """
@@ -174,18 +174,18 @@ class Zlapp(Fudan):
 
         # 改为上海时区
         os.environ['TZ'] = 'Asia/Shanghai'
-        time.tzset()
+        # time.tzset()
         today = time.strftime("%Y%m%d", time.localtime())
         print("◉今日日期为:", today)
         if last_info["d"]["info"]["date"] == today:
             print("\n*******今日已提交*******")
-            self.notify(_status = True, _message = last_info, push_key=self.push_key)
+            self.notify(_status = True, _message = str(last_info), push_key=self.push_key)
             self.close()
         else:
             print("\n\n*******未提交*******")
             self.last_info = last_info["d"]["oldInfo"]
-            if if_last_check: # 如果是最后一次检查，还是没有提交，则需要手动打卡
-                self.notify(_status=False, _message=last_info, push_key=self.push_key)
+            if if_notify_hand_submit: # 如果是最后一次检查，还是没有提交，则需要进行通知，手动打卡
+                self.notify(_status=False, _message = str(last_info), push_key=self.push_key)
 
     def read_captcha(self, img_byte):
         img = Image.open(io.BytesIO(img_byte)).convert('L')
@@ -306,6 +306,6 @@ if __name__ == '__main__':
 
     daily_fudan.check()
     daily_fudan.checkin()
-    # 再检查一遍
-    daily_fudan.check(if_last_check = True)
+    # 再检查一遍，如果还没打上，通知手动打卡
+    daily_fudan.check(if_notify_hand_submit = True)
     daily_fudan.close(1)
