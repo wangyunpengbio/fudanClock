@@ -174,7 +174,7 @@ class Zlapp(Fudan):
 
         # 改为上海时区
         os.environ['TZ'] = 'Asia/Shanghai'
-        # time.tzset()
+        time.tzset()
         today = time.strftime("%Y%m%d", time.localtime())
         print("◉今日日期为:", today)
         if last_info["d"]["info"]["date"] == today:
