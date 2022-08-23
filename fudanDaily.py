@@ -305,7 +305,7 @@ if __name__ == '__main__':
     daily_fudan.login()
 
     daily_fudan.check()
-    daily_fudan.checkin()
+    #daily_fudan.checkin()
     # 再检查一遍，如果还没打上，通知手动打卡
     daily_fudan.check(if_notify_hand_submit = True)
     daily_fudan.close(1)
